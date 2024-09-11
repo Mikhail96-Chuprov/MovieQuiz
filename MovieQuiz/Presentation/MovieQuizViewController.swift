@@ -80,8 +80,8 @@ final class MovieQuizViewController: UIViewController {
     
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
-    /// приватный метод для показа результатов раунда квиза
-    /// принимает вью модель QuizResultsViewModel и ничего не возвращает
+    // приватный метод для показа результатов раунда квиза
+    // принимает вью модель QuizResultsViewModel и ничего не возвращает
     private func show(quiz result: QuizResultsViewModel) {
         let alert = UIAlertController(
             title: result.title,
@@ -115,39 +115,49 @@ final class MovieQuizViewController: UIViewController {
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
     }
-    /// приватный метод, который и меняет цвет рамки, и вызывает метод перехода
-    /// принимает на вход булевое значение и ничего не возвращает
     private func showAnswerResult(isCorrect: Bool) {
-        imageView.layer.masksToBounds = true
-        imageView.layer.borderWidth = 8
-        imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.showNextQuestionOrResults()
-        }
-    }
+          if isCorrect { // 1
+                  correctAnswers += 1 // 2
+              }
+          imageView.layer.masksToBounds = true // 1
+          imageView.layer.borderWidth = 8 // 2
+          imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor // 3
+          // запускаем задачу через 1 секунду c помощью диспетчера задач
+          DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+              // код, который мы хотим вызвать через 1 секунду
+              self.showNextQuestionOrResults()
+          }
+      }
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questions.count - 1 {
+            imageView.layer.borderColor = UIColor.clear.cgColor
+            
             let text = "Ваш результат: \(correctAnswers)/10" // 1
             let viewModel = QuizResultsViewModel( // 2
                 title: "Этот раунд окончен!",
                 text: text,
                 buttonText: "Сыграть ещё раз")
-            show(quiz: viewModel) // 3
+                show(quiz: viewModel) // 3
         } else {
             currentQuestionIndex += 1
+            imageView.layer.borderColor = UIColor.clear.cgColor
             let nextQuestion = questions[currentQuestionIndex]
             let viewModel = convert(model: nextQuestion)
             
             show(quiz: viewModel)
         }
     }
-    @IBAction private func yesButtonClicked(_ sender: UIButton) { let currentQuestion = questions[currentQuestionIndex] // 1
+    /// метод вызывается, когда пользователь нажимает на кнопку "Да"
+    @IBAction private func yesButtonClicked(_ sender: UIButton) {
+        let currentQuestion = questions[currentQuestionIndex] // 1
         let givenAnswer = true // 2
         
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer) // 3
     }
-    @IBAction private func noButtonClicked(_ sender: UIButton) { let currentQuestion = questions[currentQuestionIndex] // 1
+
+   /// метод вызывается, когда пользователь нажимает на кнопку "Нет"
+    @IBAction private func noButtonClicked(_ sender: UIButton) {
+        let currentQuestion = questions[currentQuestionIndex] // 1
         let givenAnswer = false // 2
         
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer) // 3
