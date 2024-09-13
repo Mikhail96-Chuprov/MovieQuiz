@@ -3,6 +3,13 @@ import UIKit
 final class MovieQuizViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        showNextQuestionOrResults()
+                imageView.layer.masksToBounds=true
+                imageView.layer.cornerRadius = 20
+                imageView.layer.borderWidth=8
+                imageView.layer.borderColor=UIColor.clear.cgColor
+                
         }
     struct QuizQuestion {
         /// строка с названием фильма,
@@ -101,6 +108,7 @@ final class MovieQuizViewController: UIViewController {
         
         self.present(alert, animated: true, completion: nil)
     }
+    
     /// приватный метод конвертации, который принимает моковый вопрос и возвращает вью модель для главного экрана
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel( // 1
@@ -109,6 +117,7 @@ final class MovieQuizViewController: UIViewController {
             questionNumber: "\(currentQuestionIndex + 1)/\(questions.count)") // 4
         return questionStep
     }
+    
     /// приватный метод вывода на экран вопроса, который принимает на вход вью модель вопроса и ничего не возвращает
     private func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
@@ -147,6 +156,7 @@ final class MovieQuizViewController: UIViewController {
             show(quiz: viewModel)
         }
     }
+    
     /// метод вызывается, когда пользователь нажимает на кнопку "Да"
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex] // 1
@@ -154,7 +164,7 @@ final class MovieQuizViewController: UIViewController {
         
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer) // 3
     }
-
+    
    /// метод вызывается, когда пользователь нажимает на кнопку "Нет"
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         let currentQuestion = questions[currentQuestionIndex] // 1
